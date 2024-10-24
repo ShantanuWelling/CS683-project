@@ -7,10 +7,10 @@ binDir = bin
 inc = inc
 
 debug =
-CFlags = -Wall -O3 -std=c++11 -ggdb3 -DBOOST_LOG_DYN_LINK
-LDFlags = -lpthread -lboost_log 
-libs = /home/zeal4u/Software/libtorch/include/ 
-libDir = /home/zeal4u/Software/libtorch/lib/
+CFlags = -Wall -O3 -std=c++11 -ggdb 
+LDFlags = -static
+libs =
+libDir =
 
 
 #************************ DO NOT EDIT BELOW THIS LINE! ************************
