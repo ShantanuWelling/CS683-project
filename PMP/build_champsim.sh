@@ -12,7 +12,11 @@ L1I_PREFETCHER=no   # prefetcher/*.l1i_pref
 L1D_PREFETCHER=pmp   # prefetcher/*.l1d_pref
 L2C_PREFETCHER=no  # prefetcher/*.l2c_pref
 LLC_PREFETCHER=no   # prefetcher/*.llc_pref
-LLC_REPLACEMENT=srrip  # replacement/*.llc_repl
+	
+L1I_REPLACEMENT=lru   # prefetcher/*.l1i_repl
+L1D_REPLACEMENT=lru   # prefetcher/*.l1d_repl
+L2C_REPLACEMENT=lru   # prefetcher/*.l2c_repl
+LLC_REPLACEMENT=lru  # replacement/*.llc_repl
 NUM_CORE=1         # tested up to 8-core system
 
 BW=
@@ -119,6 +123,9 @@ cp prefetcher/${L1I_PREFETCHER}.l1i_pref prefetcher/l1i_prefetcher.cc
 cp prefetcher/${L1D_PREFETCHER}.l1d_pref prefetcher/l1d_prefetcher.cc
 cp prefetcher/${L2C_PREFETCHER}.l2c_pref prefetcher/l2c_prefetcher.cc
 cp prefetcher/${LLC_PREFETCHER}.llc_pref prefetcher/llc_prefetcher.cc
+cp replacement/${L1I_REPLACEMENT}.l1i_repl replacement/l1i_replacement.cc
+cp replacement/${L1D_REPLACEMENT}.l1d_repl replacement/l1d_replacement.cc
+cp replacement/${L2C_REPLACEMENT}.l2c_repl replacement/l2c_replacement.cc
 cp replacement/${LLC_REPLACEMENT}.llc_repl replacement/llc_replacement.cc
 
 # Build
