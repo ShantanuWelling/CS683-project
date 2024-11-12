@@ -1026,8 +1026,10 @@ void InfinityCACHE::handle_read()
           if (cache_type == IS_L1D)
             if (SUPPORT_VA)
               l1d_prefetcher_operate(RQ.entry[index].v_full_addr, RQ.entry[index].full_addr, RQ.entry[index].ip, 1, RQ.entry[index].type);
-            else
+            else{
               l1d_prefetcher_operate(RQ.entry[index].full_addr, RQ.entry[index].ip, 1, RQ.entry[index].type);
+              pattern_data.update_data(RQ.entry[index].full_addr, RQ.entry[index].ip);
+            }
           else if (cache_type == IS_L2C)
 #ifdef FULL_ADDR
             l2c_prefetcher_operate(blocks[key].full_addr, RQ.entry[index].ip, 1, RQ.entry[index].type, 0);
@@ -1295,8 +1297,10 @@ void InfinityCACHE::handle_read()
             if (cache_type == IS_L1D)
               if (SUPPORT_VA)
                 l1d_prefetcher_operate(RQ.entry[index].v_full_addr, RQ.entry[index].full_addr, RQ.entry[index].ip, 0, RQ.entry[index].type);
-              else
+              else{
                 l1d_prefetcher_operate(RQ.entry[index].full_addr, RQ.entry[index].ip, 0, RQ.entry[index].type);
+                pattern_data.update_data(RQ.entry[index].full_addr, RQ.entry[index].ip);
+              }
             if (cache_type == IS_L2C)
 #ifdef FULL_ADDR
               l2c_prefetcher_operate(RQ.entry[index].full_addr, RQ.entry[index].ip, 0, RQ.entry[index].type, 0);
@@ -1393,8 +1397,10 @@ void CACHE::handle_read()
           if (cache_type == IS_L1D)
             if (SUPPORT_VA)
               l1d_prefetcher_operate(RQ.entry[index].v_full_addr, RQ.entry[index].full_addr, RQ.entry[index].ip, 1, RQ.entry[index].type);
-            else
+            else{
               l1d_prefetcher_operate(RQ.entry[index].full_addr, RQ.entry[index].ip, 1, RQ.entry[index].type);
+              pattern_data.update_data(RQ.entry[index].full_addr, RQ.entry[index].ip);
+            }
           else if (cache_type == IS_L2C)
 #ifdef FULL_ADDR
             l2c_prefetcher_operate(block[set][way].full_addr, RQ.entry[index].ip, 1, RQ.entry[index].type, 0);
@@ -1684,6 +1690,7 @@ g_fout.fout << pf_addr_scores[address].pattern << "," << block[set][way].full_ad
                 l1d_prefetcher_operate(RQ.entry[index].v_full_addr, RQ.entry[index].full_addr, RQ.entry[index].ip, 0, RQ.entry[index].type);
               } else {
                 l1d_prefetcher_operate(RQ.entry[index].full_addr, RQ.entry[index].ip, 0, RQ.entry[index].type);
+                pattern_data.update_data(RQ.entry[index].full_addr, RQ.entry[index].ip);
               }
             if (cache_type == IS_L2C)
 #ifdef FULL_ADDR

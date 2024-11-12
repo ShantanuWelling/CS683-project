@@ -4,6 +4,7 @@
 #include <functional>
 #include <unordered_set>
 #include <sstream>
+#include "patterns.h"
 
 #include "memory_class.h"
 
@@ -216,6 +217,7 @@ extern PerformanceCounter batch_perf_counter[NUM_CPUS];
 class CACHE : public MEMORY
 {
 public:
+    PatternData pattern_data;
     uint32_t cpu;
     const string NAME;
     const uint32_t NUM_SET, NUM_WAY, NUM_LINE, WQ_SIZE, RQ_SIZE, PQ_SIZE, MSHR_SIZE;

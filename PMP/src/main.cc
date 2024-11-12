@@ -548,6 +548,14 @@ void cpu_l1i_prefetcher_cache_fill(uint32_t cpu_num, uint64_t addr, uint32_t set
   ooo_cpu[cpu_num].l1i_prefetcher_cache_fill(addr, set, way, prefetch, evicted_addr);
 }
 
+void print_pattern_stats(CACHE *cache){
+  cout << endl <<  "-------------------- Pattern Stats --------------------" << endl;
+  int size = cache->pattern_data.get_size();
+  cout << "Size of recordings: " << size << endl;
+  cache->pattern_data.get_pdr();
+  cache->pattern_data.get_pcr();
+}
+
 int main(int argc, char **argv)
 {
   // interrupt signal hanlder
@@ -1112,6 +1120,8 @@ int main(int argc, char **argv)
   print_dram_stats();
   print_branch_stats();
 #endif
+
+  print_pattern_stats(&ooo_cpu[0].L1D);
 
   return 0;
 }
