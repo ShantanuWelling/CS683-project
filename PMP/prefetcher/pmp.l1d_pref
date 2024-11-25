@@ -192,12 +192,44 @@ public:
     vector<int> pattern;
 };
 
+struct pair_hash1 {
+    template <class T1, class T2>
+    std::size_t operator()(const std::pair<T1, T2>& pair) const {
+        std::size_t hash1 = std::hash<T1>{}(pair.first);
+        std::size_t hash2 = std::hash<T2>{}(pair.second);
+        return hash1 ^ (hash2 << 1); // or other combining technique
+    }
+};
+
+struct VectorIntHash {
+    std::size_t operator()(const std::vector<int>& vec) const {
+        std::size_t seed = vec.size();
+        for (int num : vec) {
+            seed ^= std::hash<int>()(num) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        }
+        return seed;
+    }
+};
+
+struct VectorBoolHash {
+    std::size_t operator()(const std::vector<bool>& vec) const {
+        std::size_t seed = vec.size();
+        for (bool b : vec) {
+            // Convert `bool` to `int` to use standard hash
+            seed ^= std::hash<int>()(b ? 1 : 0) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        }
+        return seed;
+    }
+};
+
 class OffsetPatternTable : public LRUSetAssociativeCache<OffsetPatternTableData>
 {
     typedef LRUSetAssociativeCache<OffsetPatternTableData> Super;
 
 public:
-    long long int ctr;
+    std::unordered_map<std::pair<uint64_t, uint64_t>, vector<bool>, pair_hash1> pdr_table_bool;
+    std::unordered_map<std::pair<uint64_t, uint64_t>, vector<int>, pair_hash1> pdr_table_int;
+
     OffsetPatternTable(int size, int pattern_len, int tag_size,
                        int num_ways = 16, int max_conf = 32, 
                        int debug_level = 0, int cpu = 0)
@@ -242,7 +274,6 @@ public:
                     for (auto &e : stored_pattern) {
                         e >>= BACKOFF_TIMES;
                     }
-                    this->ctr++;
                 }
             }
             Super::rp_promote(key);
@@ -252,6 +283,32 @@ public:
             Super::insert(key, {pattern_convert(pattern)});
             Super::rp_insert(key);
         }
+        entry = Super::find(key);
+        std::pair<uint64_t, uint64_t> pdr_key = make_pair(address, pc);
+        if (pdr_table_int.find(pdr_key) == pdr_table_int.end()) {
+            vector<int> int_pattern(pattern.size());
+            transform(pattern.begin(), pattern.end(), int_pattern.begin(), [](bool b) {
+                return b ? 1 : 0;
+            });
+            pdr_table_int[pdr_key] = int_pattern;
+            pdr_table_bool[pdr_key] = pattern;
+        }
+        else{
+            // add pattern to pdr_table_int[pdr_key]
+            for(int i = 0; i < pattern.size(); i++){
+                pdr_table_int[pdr_key][i] += pattern[i];
+                pdr_table_int[pdr_key][i] = min(pdr_table_int[pdr_key][i], max_conf);
+                pdr_table_bool[pdr_key][i] = pdr_table_bool[pdr_key][i] || pattern[i];
+            }
+        }
+        // pdr_table_int[make_pair(address, pc)] = entry->data.pattern;
+        // for(int i = 0; i < entry->data.pattern.size(); i++) {
+        //     if (entry->data.pattern[i] > 0) {
+        //         pdr_table_bool[make_pair(address, pc)].push_back(true);
+        //     } else {
+        //         pdr_table_bool[make_pair(address, pc)].push_back(false);
+        //     }
+        // }
     }
 
     vector<OffsetPatternTableData> find(uint64_t pc, uint64_t block_number)
@@ -536,8 +593,27 @@ public:
         cerr << this->pf_buffer.log();
         cerr << "Prefetch buffer end" << endl;
 
-        cerr << "Eviction Count" << endl;
-        cerr << this->opt.ctr << endl;
+        std::unordered_map<vector<int>, int, VectorIntHash> pattern_count_int;
+        for (auto &e : this->opt.pdr_table_int) {
+            pattern_count_int[e.second]++;
+        }
+        std::unordered_map<vector<bool>, int, VectorBoolHash> pattern_count_bool;
+        for (auto &e : this->opt.pdr_table_bool) {
+            pattern_count_bool[e.second]++;
+        }
+        // sum of all pattern_count_int
+        int sum = 0;
+        for (auto &e : pattern_count_int) {
+            sum += e.second;
+        }
+        cerr << "PDR int " << sum/pattern_count_int.size() << endl;
+
+        // sum of all pattern_count_bool
+        sum = 0;
+        for (auto &e : pattern_count_bool) {
+            sum += e.second;
+        }
+        cerr << "PDR bool " << sum/pattern_count_bool.size() << endl;
     }
 
 private:
