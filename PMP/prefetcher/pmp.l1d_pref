@@ -197,6 +197,7 @@ class OffsetPatternTable : public LRUSetAssociativeCache<OffsetPatternTableData>
     typedef LRUSetAssociativeCache<OffsetPatternTableData> Super;
 
 public:
+    long long int ctr;
     OffsetPatternTable(int size, int pattern_len, int tag_size,
                        int num_ways = 16, int max_conf = 32, 
                        int debug_level = 0, int cpu = 0)
@@ -246,6 +247,7 @@ public:
         }
         else
         {
+            this->ctr++;
             Super::insert(key, {pattern_convert(pattern)});
             Super::rp_insert(key);
         }
@@ -532,6 +534,9 @@ public:
         cerr << "Prefetch buffer begin" << dec << endl;
         cerr << this->pf_buffer.log();
         cerr << "Prefetch buffer end" << endl;
+
+        cerr << "Eviction Count" << endl;
+        cerr << this->opt.ctr << endl;
     }
 
 private:
