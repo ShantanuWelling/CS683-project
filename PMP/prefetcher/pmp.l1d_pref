@@ -620,6 +620,7 @@ public:
         for (auto &e : this->opt.pcr_table) {
             sum += e.second;
         }
+        cout << "pcr table size " << this->opt.pcr_table.size() << endl;
         cout << "PCR " << ((double)sum)/this->opt.pcr_table.size() << endl;
     }
 
