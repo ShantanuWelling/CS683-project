@@ -238,16 +238,17 @@ public:
                 if (max_value < (1 << BACKOFF_TIMES)) {
                     entry->data.pattern[0] = max_value;
                 }
-                else 
+                else{ 
                     for (auto &e : stored_pattern) {
                         e >>= BACKOFF_TIMES;
                     }
+                    this->ctr++;
+                }
             }
             Super::rp_promote(key);
         }
         else
         {
-            this->ctr++;
             Super::insert(key, {pattern_convert(pattern)});
             Super::rp_insert(key);
         }
