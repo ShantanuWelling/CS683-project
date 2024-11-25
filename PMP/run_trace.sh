@@ -1,4 +1,4 @@
-# ./bin/bimodal-no-pmp-no-no-lru-1core -warmup_instructions 50000000 -simulation_instructions 200000000 -traces ../602.gcc_s-734B.champsimtrace.xz > logs/pmp_pdr/602.txt &
+./bin/bimodal-no-pmp-no-no-lru-1core -warmup_instructions 50000000 -simulation_instructions 200000000 -traces ../traces/602.gcc_s-734B.champsimtrace.xz > logs/pmp_pdr/602.txt &
 ./bin/bimodal-no-pmp-no-no-lru-1core -warmup_instructions 50000000 -simulation_instructions 200000000 -traces ../traces/603.bwaves_s-891B.champsimtrace.xz > logs/pmp_pdr/603.txt &
 ./bin/bimodal-no-pmp-no-no-lru-1core -warmup_instructions 50000000 -simulation_instructions 200000000 -traces ../traces/605.mcf_s-472B.champsimtrace.xz > logs/pmp_pdr/605.txt &
 ./bin/bimodal-no-pmp-no-no-lru-1core -warmup_instructions 50000000 -simulation_instructions 200000000 -traces ../traces/607.cactuBSSN_s-2421B.champsimtrace.xz > logs/pmp_pdr/607.txt &

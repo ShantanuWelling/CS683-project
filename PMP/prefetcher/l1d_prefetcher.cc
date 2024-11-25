@@ -606,14 +606,14 @@ public:
         for (auto &e : pattern_count_int) {
             sum += e.second;
         }
-        cerr << "PDR int " << sum/pattern_count_int.size() << endl;
+        cout << "PDR int " << sum/pattern_count_int.size() << endl;
 
         // sum of all pattern_count_bool
         sum = 0;
         for (auto &e : pattern_count_bool) {
             sum += e.second;
         }
-        cerr << "PDR bool " << sum/pattern_count_bool.size() << endl;
+        cout << "PDR bool " << sum/pattern_count_bool.size() << endl;
     }
 
 private:
